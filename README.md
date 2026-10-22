@@ -1,2 +1,3 @@
 # Leobyte Tecnologias
-# Leobyte Tecnologia
+# Elaboração do site 
+# Que estamos elaborando e fazendo testes em aula
