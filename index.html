@@ -159,6 +159,29 @@
             <span class="copyright">© 2026 Leobyte Tecnologia</span>
         </div>
     </footer>
+    <aside class="tech-chat" aria-label="Assistente de tecnologia">
+        <section class="tech-chat-panel" id="tech-chat-panel" aria-label="Conversa com o assistente">
+            <header class="tech-chat-header">
+                <div>
+                    <strong>Assistente Leobyte</strong>
+                    <span>Dúvidas sobre tecnologia</span>
+                </div>
+                <button class="tech-chat-close" type="button" aria-label="Minimizar conversa">−</button>
+            </header>
+            <div class="tech-chat-messages" id="tech-chat-messages" role="log" aria-live="polite" aria-relevant="additions">
+                <div class="tech-chat-message assistant">Olá! Sou o assistente da Leobyte. Como posso te chamar? Se preferir, já pode mandar sua dúvida de tecnologia.</div>
+            </div>
+            <form class="tech-chat-form">
+                <label class="visually-hidden" for="tech-chat-input">Digite sua mensagem</label>
+                <input id="tech-chat-input" name="message" type="text" maxlength="500" placeholder="Escreva sua mensagem..." autocomplete="off" required>
+                <button type="submit" aria-label="Enviar mensagem"><span aria-hidden="true">→</span></button>
+            </form>
+            <p class="tech-chat-note">Respostas automáticas sobre tecnologia.</p>
+        </section>
+        <button class="tech-chat-toggle" type="button" aria-expanded="true" aria-controls="tech-chat-panel">
+            <span aria-hidden="true">✦</span> Conversar
+        </button>
+    </aside>
     <script>
         const menuToggle = document.querySelector(".menu-toggle");
         const siteNav = document.querySelector(".site-nav");
@@ -178,5 +201,6 @@
             }
         });
     </script>
+    <script src="script.js" defer></script>
 </body>
 </html>
