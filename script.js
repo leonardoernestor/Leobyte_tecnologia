@@ -6,12 +6,28 @@ document.addEventListener("DOMContentLoaded", () => {
 	const form = document.querySelector(".tech-chat-form");
 	const input = document.querySelector("#tech-chat-input");
 	const messages = document.querySelector("#tech-chat-messages");
-
-	if (!chat || !panel || !toggle || !close || !form || !input || !messages) {
+	const note = document.querySelector(".tech-chat-note");
+	if (!chat || !panel || !toggle || !close || !form || !input || !messages || !note) {
 		throw new Error("Não foi possível iniciar o assistente de tecnologia.");
 	}
 
+	const aiEndpoint =
+		typeof window.LEOBYTE_CHAT_API_URL === "string"
+			? window.LEOBYTE_CHAT_API_URL.trim()
+			: "";
+	const sendButton = form.querySelector('button[type="submit"]');
+	if (!sendButton) {
+		throw new Error("O botão de envio do assistente não foi encontrado.");
+	}
+
 	let visitorName = "";
+	let conversation = [];
+
+	if (aiEndpoint) {
+		note.textContent = "IA Cloudflare ativa. Não envie dados pessoais.";
+	} else {
+		note.textContent = "IA aguardando configuração do Cloudflare; respostas automáticas disponíveis.";
+	}
 
 	const normalize = (text) =>
 		text
@@ -88,6 +104,29 @@ document.addEventListener("DOMContentLoaded", () => {
 		return `Ainda não tenho uma resposta específica para essa pergunta${visitorName ? `, ${visitorName}` : ""}. Posso ajudar com computadores, internet, celulares, programação, criação de sites, GitHub e segurança digital. Se puder, conte mais detalhes sobre o que você quer resolver.`;
 	};
 
+	const requestAiAnswer = async (message) => {
+		const history = [...conversation, { role: "user", content: message }].slice(-8);
+		const response = await fetch(aiEndpoint, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ messages: history }),
+		});
+		const data = await response.json();
+
+		if (!response.ok) {
+			throw new Error(data.error || `A IA respondeu com o status ${response.status}.`);
+		}
+		if (typeof data.reply !== "string" || !data.reply.trim()) {
+			throw new Error("A resposta da IA veio em um formato inválido.");
+		}
+
+		conversation = [
+			...history,
+			{ role: "assistant", content: data.reply.trim() },
+		].slice(-8);
+		return data.reply.trim();
+	};
+
 	const nameFromMessage = (message) => {
 		const match = message.match(/^(?:meu nome [eé]|pode me chamar de|me chamo|sou o|sou a)\s+(.+)$/i);
 		return match?.[1]?.trim();
@@ -120,7 +159,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	close.addEventListener("click", () => setPanelOpen(false));
 	toggle.addEventListener("click", () => setPanelOpen(panel.hidden));
 
-	form.addEventListener("submit", (event) => {
+	form.addEventListener("submit", async (event) => {
 		event.preventDefault();
 		const message = input.value.trim();
 		if (!message) return;
@@ -138,7 +177,23 @@ document.addEventListener("DOMContentLoaded", () => {
 			}
 		}
 
-		addMessage(answer(message), "assistant");
-		input.focus();
+		if (!aiEndpoint) {
+			addMessage(answer(message), "assistant");
+			input.focus();
+			return;
+		}
+
+		sendButton.disabled = true;
+		input.disabled = true;
+		try {
+			addMessage(await requestAiAnswer(message), "assistant");
+		} catch (error) {
+			console.error("Falha ao consultar o assistente de IA.", error);
+			addMessage("Não consegui consultar a IA agora. Tente novamente em instantes ou use o botão de WhatsApp para falar com a Leobyte.", "assistant");
+		} finally {
+			sendButton.disabled = false;
+			input.disabled = false;
+			input.focus();
+		}
 	});
 });

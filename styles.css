@@ -1093,6 +1093,11 @@ h2 {
     background: #194785;
 }
 
+.tech-chat-form button:disabled {
+    cursor: wait;
+    opacity: 0.65;
+}
+
 .tech-chat button:focus-visible,
 .tech-chat-form input:focus-visible {
     outline: 2px solid var(--accent-blue);
