@@ -1533,12 +1533,11 @@ body {
 }
 
 .brand-mark {
-    border-color: #cbd6e3;
+    display: block;
+    object-fit: contain;
+    border: 0;
     border-radius: 8px;
-    background: #e9eef5;
-    color: var(--accent);
-    font-size: 19px;
-    letter-spacing: -1px;
+    background: transparent;
 }
 
 .brand-accent {
