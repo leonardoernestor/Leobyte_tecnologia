@@ -1846,12 +1846,14 @@ body {
 }
 
 .button-outline {
-    border-color: #b6c6d9;
-    color: var(--accent);
+    border-color: var(--accent);
+    background: var(--accent);
+    color: #fff;
 }
 
 .button-outline:hover {
-    background: #eaf0f7;
+    background: #194785;
+    color: #fff;
     box-shadow: none;
 }
 
